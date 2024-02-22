@@ -22,39 +22,50 @@ y_values = np.cos(t_values)
 # Choose some data points for interpolation
 interpolation_points = np.array([2, 4, 6, 8])
 
-# Define three categories for mx
-mx_lambda = lambda x: np.exp(-x) / (1 + x**2)
-mx_sin = np.sin(t_values)
-mx_constant = np.ones_like(t_values)
+# Define three different mx functions
+def mx_lambda(x):
+    return 1 / (1 + x**2)
 
-# Perform Lagrange interpolation for each category
-x_interpolated_lambda = lagrange_interpolation(t_values, x_values * mx_lambda(t_values), interpolation_points)
-y_interpolated_lambda = lagrange_interpolation(t_values, y_values * mx_lambda(t_values), interpolation_points)
+def mx_sin(x):
+    return np.sin(x)
 
-x_interpolated_sin = lagrange_interpolation(t_values, x_values * mx_sin, interpolation_points)
-y_interpolated_sin = lagrange_interpolation(t_values, y_values * mx_sin, interpolation_points)
+def mx_constant(x):
+    return np.full_like(x, 0.5)  # You can replace 0.5 with any constant
 
-x_interpolated_constant = lagrange_interpolation(t_values, x_values * mx_constant, interpolation_points)
-y_interpolated_constant = lagrange_interpolation(t_values, y_values * mx_constant, interpolation_points)
+# Perform Lagrange interpolation for each mx function
+x_interpolated_lambda = lagrange_interpolation(t_values, mx_lambda(t_values), interpolation_points)
+x_interpolated_sin = lagrange_interpolation(t_values, mx_sin(t_values), interpolation_points)
+x_interpolated_constant = lagrange_interpolation(t_values, mx_constant(t_values), interpolation_points)
 
 # Plot the original sinusoidal motion
+plt.figure(figsize=(15, 5))
+
+# Plot for mx = lambda / (1 + x^2)
+plt.subplot(1, 3, 1)
 plt.plot(t_values, x_values, label='Original x(t)')
-plt.plot(t_values, y_values, label='Original y(t)')
-
-# Plot the Lagrange interpolation for mx=lambda
-plt.scatter(interpolation_points, x_interpolated_lambda, color='red', label='Interpolated x(t) - mx=lambda')
-plt.scatter(interpolation_points, y_interpolated_lambda, color='blue', label='Interpolated y(t) - mx=lambda')
-
-# Plot the Lagrange interpolation for mx=sin(x)
-plt.scatter(interpolation_points, x_interpolated_sin, color='green', label='Interpolated x(t) - mx=sin(x)')
-plt.scatter(interpolation_points, y_interpolated_sin, color='purple', label='Interpolated y(t) - mx=sin(x)')
-
-# Plot the Lagrange interpolation for mx=constant
-plt.scatter(interpolation_points, x_interpolated_constant, color='orange', label='Interpolated x(t) - mx=constant')
-plt.scatter(interpolation_points, y_interpolated_constant, color='brown', label='Interpolated y(t) - mx=constant')
-
-plt.legend()
+plt.scatter(interpolation_points, x_interpolated_lambda, color='red', label='Interpolated x(t)')
+plt.title('mx = λ / (1 + x^2)')
 plt.xlabel('t')
 plt.ylabel('Values')
-plt.title('Lagrange Interpolation with Different mx Categories')
+plt.legend()
+
+# Plot for mx = sin(x)
+plt.subplot(1, 3, 2)
+plt.plot(t_values, x_values, label='Original x(t)')
+plt.scatter(interpolation_points, x_interpolated_sin, color='blue', label='Interpolated x(t)')
+plt.title('mx = sin(x)')
+plt.xlabel('t')
+plt.ylabel('Values')
+plt.legend()
+
+# Plot for mx = constant
+plt.subplot(1, 3, 3)
+plt.plot(t_values, x_values, label='Original x(t)')
+plt.scatter(interpolation_points, x_interpolated_constant, color='green', label='Interpolated x(t)')
+plt.title('mx = constant')
+plt.xlabel('t')
+plt.ylabel('Values')
+plt.legend()
+
+plt.tight_layout()
 plt.show()
